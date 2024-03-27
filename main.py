@@ -105,5 +105,5 @@ def normalView():
             </q-td>
             ''')
 
-ui.run()
+ui.run(port=80,title='CoTrack',dark=None)
 editorView()
