@@ -3,7 +3,7 @@ import json
 
 from nicegui import ui
 from barcode.writer import ImageWriter
-from barcode import EAN8
+from barcode import Code128
 
 def saveData(saveData:dict)->bool:
     try:
@@ -46,10 +46,16 @@ def updateAvailability(input, tableRef, setting:bool):
     tableRef.update_rows(runningData['rows'])
 
 def genBarcode(serialNum):
-    ean = EAN8(str(serialNum))
+    print(serialNum)
+    code = Code128(str(serialNum))
     outputFile = 'barcodes/' + str(serialNum)
-    ean.save(str(outputFile))
+    code.save(str(outputFile))
     ui.download(outputFile+".svg")
+
+def addRow(name, descr,table):
+    newSerial = genNewSerial()
+    table.add_rows({'id': newSerial, 'name': name, 'descr': descr, 'flagged' : False})
+    genBarcode(newSerial)
 
 runningData = readData()
 
@@ -69,12 +75,11 @@ def editorView():
         with table.add_slot('bottom'):
             with table.row():
                 with table.cell():
-                    ui.button(on_click=lambda serialNum = genNewSerial(): (
-                        table.add_rows({'id': serialNum, 'name': new_name.value, 'descr': new_descr.value, 'flagged' : False}),
+                    ui.button(on_click=lambda: (
+                        addRow(new_name.value, new_descr.value, table),
                         new_name.set_value(None),
                         new_descr.set_value(None),
-                        saveData(runningData),
-                        genBarcode(serialNum)
+                        saveData(runningData)
                     ), icon='add').props('flat fab-mini')
                 with table.cell():
                     new_name = ui.input('Name')
