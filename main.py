@@ -57,7 +57,7 @@ def updateAvailability(input=None, setting:bool=False):
                         row["flagged"] = setting
                     else:
                         pass
-    saveData(runningData)
+        saveData(runningData)
     table.update_rows(runningData['rows'])
 
 def genBarcode(serialNum):
@@ -79,11 +79,10 @@ def editorView():
     global table
     table = ui.table(columns=runningData['columns'], rows=runningData['rows'], selection='multiple').classes('w-full')
     with table.add_slot('top-left'):
-        inputRef = ui.input(placeholder='Search').props('type=search').bind_value(table, 'filter').on('keydown.enter',lambda: (updateAvailability(inputRef.value, table, False),inputRef.set_value(None)))
+        inputRef = ui.input(placeholder='Search').props('type=search').bind_value(table, 'filter').on('keydown.enter',lambda: (updateAvailability(inputRef.value, False),inputRef.set_value(None)))
         with inputRef.add_slot("append"):
             ui.icon('search')
     with table.add_slot('top-right'):
-        ui.button('Refresh', on_click=lambda: updateAvailability())
         ui.button('Refilled', on_click=lambda: updateAvailability(table.selected, table, False)).bind_enabled_from(table, 'selected', backward=lambda val: bool(val))
         ui.button('Remove', on_click=lambda: (table.remove_rows(*table.selected),saveData(runningData))).bind_enabled_from(table, 'selected', backward=lambda val: bool(val))
         with ui.link(target=normalView):
@@ -116,7 +115,7 @@ def normalView():
     table =  ui.table(columns=runningData['columns'], rows=runningData['rows']).classes('w-full')
     with table.add_slot('top-left'):
         inp = None
-        inputRef = ui.input(placeholder='Scanner').bind_value(table, 'filter').on('keydown.enter',lambda: (updateAvailability(inputRef.value, table, True),inputRef.set_value(None)))
+        inputRef = ui.input(placeholder='Scanner').bind_value(table, 'filter').on('keydown.enter',lambda: (updateAvailability(inputRef.value, True),inputRef.set_value(None)))
     with table.add_slot('top-right'):
         with ui.link(target=editorView):
             ui.button('Editor View')
@@ -128,7 +127,7 @@ def normalView():
         </q-td>
         ''')
     
-threading.Thread(target=lambda: automaticRefresh(30))
+#threading.Thread(target=lambda: automaticRefresh(30))
 
 ui.run(port=80,title='CoTrack',dark=None)
 editorView()
