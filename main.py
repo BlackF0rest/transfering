@@ -83,6 +83,7 @@ def editorView():
         with inputRef.add_slot("append"):
             ui.icon('search')
     with table.add_slot('top-right'):
+        ui.button('Refresh&Save',on_click=lambda: updateAvailability())
         ui.button('Refilled', on_click=lambda: updateAvailability(table.selected, table, False)).bind_enabled_from(table, 'selected', backward=lambda val: bool(val))
         ui.button('Remove', on_click=lambda: (table.remove_rows(*table.selected),saveData(runningData))).bind_enabled_from(table, 'selected', backward=lambda val: bool(val))
         with ui.link(target=normalView):
@@ -127,7 +128,7 @@ def normalView():
         </q-td>
         ''')
     
-#threading.Thread(target=lambda: automaticRefresh(30))
+threading.Thread(target=lambda: automaticRefresh(30))
 
 ui.run(port=80,title='CoTrack',dark=None)
 editorView()
