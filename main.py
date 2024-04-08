@@ -109,6 +109,12 @@ def editorView():
             </q-badge>
         </q-td>
         ''')
+        <q-tr v-for="(row, index) in runningData" :key="index">
+             <q-td :key="Available" :props="row">
+                <q-badge :color="row[key] ? 'green' : 'red'">
+                </q-badge>
+            </q-td>
+        </q-tr>
         
 @ui.page('/')
 def normalView():
